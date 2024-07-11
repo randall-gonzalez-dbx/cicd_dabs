@@ -10,3 +10,4 @@ resources:
 
       configuration:
         some_config_var: some_value
+        something_new: value
