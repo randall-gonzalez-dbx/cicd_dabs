@@ -1,4 +1,4 @@
-name: deploy_to_test_env
+name: deploy_to_prod_env
 
 # Controls when the workflow will run
 on:
