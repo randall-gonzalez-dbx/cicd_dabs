@@ -1,0 +1,39 @@
+# The main job for project1.
+resources:
+  jobs:
+    project1_job:
+      name: project1_job
+
+      tasks:
+        - task_key: notebook_task1
+          job_cluster_key: job_cluster1
+          notebook_task:
+            notebook_path: ../src/notebook.ipynb
+
+        - task_key: notebook_task2
+          job_cluster_key: job_cluster2
+          notebook_task:
+            notebook_path: ../src/notebook.ipynb    
+
+        - task_key: refresh_pipeline
+          depends_on:
+            - task_key: notebook_task1
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.project1_pipeline.id}                    
+        
+      job_clusters:
+        - job_cluster_key: job_cluster1
+          new_cluster:
+            spark_version: 13.3.x-scala2.12
+            node_type_id: Standard_D3_v2
+            autoscale:
+                min_workers: 1
+                max_workers: 4
+
+        - job_cluster_key: job_cluster2
+          new_cluster: ${var.var_my_reusable_cluster_definition}
+
+      schedule:
+        # Run every day at 8:37 AM
+        quartz_cron_expression: '44 37 8 * * ?'
+        timezone_id: Europe/Amsterdam

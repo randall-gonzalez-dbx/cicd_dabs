@@ -1,0 +1,12 @@
+# The main pipeline for project1
+resources:
+  pipelines:
+    project1_pipeline:
+      name: project1_pipeline
+      target: ${var.var_dlt_schema}
+      libraries:
+        - notebook:
+            path: ../src/dlt_pipeline.ipynb
+
+      configuration:
+        some_config_var: some_value

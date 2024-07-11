@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=bundle-schema.json
+# This is a Databricks asset bundle definition for project1.
+# See https://docs.databricks.com/dev-tools/bundles/index.html for documentation.
+bundle:
+  name: project1
+
+include:
+  - resources/*.yml
+  - variables/*.yml
+
+variables:
+  var_dlt_schema:
+    description: target DLT schema
+    default: dlt_dev
+
+targets:
+  # The 'dev' target, for development purposes. This target is the default.
+  dev:
+    # We use 'mode: development' to indicate this is a personal development copy:
+    # - Deployed resources get prefixed with '[dev my_user_name]'
+    # - Any job schedules and triggers are paused by default
+    # - The 'development' mode is used for Delta Live Tables pipelines
+    mode: development
+    default: true
+    workspace:
+      host: https://adb-992016052942878.18.azuredatabricks.net
+      root_path: /Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}
+
+  test:
+    workspace:
+      host: https://adb-1198170216968832.12.azuredatabricks.net
+      root_path: /Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}
+    variables:
+      var_dlt_schema: dlt_test 
+    run_as:
+      # This runs as sp in test. 
+      # See https://docs.databricks.com/dev-tools/bundles/permissions.html.
+      service_principal_name: "881685ba-ebdc-41b5-b574-0f5a7e5b50a2"      
+
+  # The 'prod' target, used for production deployment.
+  prod:
+    # We use 'mode: production' to indicate this is a production deployment.
+    # Doing so enables strict verification of the settings below.
+    mode: production
+    workspace:
+      host: https://adb-2676588102148189.9.azuredatabricks.net
+      # We always use /Users/881685ba-ebdc-41b5-b574-0f5a7e5b50a2 for all resources to make sure we only have a single copy.
+      # If this path results in an error, please make sure you have a recent version of the CLI installed.
+      root_path: /Users/881685ba-ebdc-41b5-b574-0f5a7e5b50a2/.bundle/${bundle.name}/${bundle.target}
+    variables:
+      var_dlt_schema: dlt_prod       
+    run_as:
+      # This runs as sp in production. 
+      # See https://docs.databricks.com/dev-tools/bundles/permissions.html.    
+      service_principal_name: "881685ba-ebdc-41b5-b574-0f5a7e5b50a2"
